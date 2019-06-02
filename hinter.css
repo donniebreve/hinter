@@ -1,0 +1,19 @@
+.hinter {
+    position: fixed !important;
+    background: rgba(221, 221, 221, 0.90) !important;
+    color: #333 !important;
+    border: 1px solid #666 !important;
+    border-radius: 3px !important;
+    box-shadow: 2px 2px 2px !important;
+    margin: 0 !important;
+    padding: 3px 6px;
+    text-align: center !important;
+    text-transform: none !important;
+    font-style: normal !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    letter-spacing: 1px !important;
+    line-height: 14px !important;
+    opacity: 1 !important;
+    z-index: 99999 !important;
+}
