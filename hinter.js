@@ -52,6 +52,14 @@ function isVisible(element) {
 }
 
 /**
+ * Gets the hint text for the index
+ * @param number index 
+ */
+function getHintText(index) {
+    return characters[Math.floor(index / 24)] + characters[(index % 24)]
+}
+
+/**
  * Creates hints.
  */
 function createHints() {
@@ -63,13 +71,13 @@ function createHints() {
     for (let i = 0; i < elements.length; i++) {
         let element = elements[i];
         let rectangle = element.getBoundingClientRect();
-        let hintText = characters[Math.floor(i / 24)] + characters[(i % 24)];
+        let hintText = getHintText(i);
         let hint = document.createElement('div');
         hint.className = 'hinter';
-        hint.style.top = (rectangle.top - 2) + 'px';
-        hint.style.left = (rectangle.left - 4) + 'px';
-        hint.style.height = (rectangle.height - 6) + 'px';
-        hint.style.width = (rectangle.width - 10) + 'px';
+        hint.style.top = rectangle.top + 'px';
+        hint.style.left = rectangle.left + 'px';
+        hint.style.height = rectangle.height + 'px';
+        hint.style.width = rectangle.width + 'px';
         hint.innerText = hintText;
         hints[hintText] = {
             element: hint,
@@ -127,7 +135,7 @@ function clear() {
  * @param {event} event
  */
 function onKey(event) {
-    if (focused && event.keyCode != 13) {
+    if (focused) {
         clear();
     }
     let element = event.target;
@@ -151,8 +159,7 @@ function onKey(event) {
             return;
         }
     }
-    if (event.ctrlKey
-        && event.shiftKey
+    if (event.shiftKey
         && event.keyCode == activationKey) {
         createHints();
     }
