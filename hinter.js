@@ -12,7 +12,7 @@ let characters = [
 let keys = [];
 
 /**
- * Sleeps.
+ * Sleeps for a given time.
  * @param {number} ms 
  */
 function sleep(ms) {
@@ -24,35 +24,48 @@ function sleep(ms) {
  * @param {element} element
  */
 function isVisible(element) {
+    // if (element.innerHTML == 'Send Feedback') {
+    //     console.log('send feedback link');
+    //     console.log('element.type: ' + element.type);
+    //     console.log('element.hidden: ' + element.hidden);
+    //     console.log('element.disabled: ' + element.disabled);
+    //     let computedStyle = window.getComputedStyle(element, null);
+    //     console.log(computedStyle);
+    //     console.log('computedStyle.display: ' + computedStyle.display);
+    //     console.log('computedStyle.width: ' + computedStyle.width);
+    //     console.log('computedStyle.visibility: ' + computedStyle.visibility);
+    //     console.log('computedStyle.opacity: ' + computedStyle.opacity);
+    // }
+    // hidden elements
     if (element.type == 'hidden' || element.type == 'submit') return false;
     if (element.hidden === true) return false;
     if (element.disabled) return false;
-    if (element.style.display == 'none') return false;
-    // Check coordinates
+    let computedStyle = window.getComputedStyle(element, null);
+    if (computedStyle.display == 'none') return false;
+    if (computedStyle.visibility == 'hidden') return false;
+    if (computedStyle.opacity == '0') return false;
+    if (computedStyle.width == '0') return false;
+    // check the element's coordinates
     var rectangle = element.getBoundingClientRect();
     var viewWidth = window.innerWidth;
     var viewHeight = window.innerHeight;
     if (rectangle.x + rectangle.width < 0) {
-        //console.log('rectangle.x (' + rectangle.x + ') + rectangle.width (' + rectangle.width + ') < 0: ' + element.innerText);
         return false;
     }
     if (rectangle.x > viewWidth) {
-        //console.log('rectangle.x (' + rectangle.x + ') > viewWidth (' + viewWidth + '): ' + element.innerText);
         return false;
     }
     if (rectangle.y + rectangle.height < 0) {
-        //console.log('rectangle.y (' + rectangle.y + ') + rectangle.height (' + rectangle.height + ') < 0: ' + element.innerText);
         return false;
     }
     if (rectangle.y > viewHeight) {
-        //console.log('rectangle.y (' + rectangle.y + ') > viewHeight (' + viewHeight + '): ' + element.innerText);
         return false;
     }
     return true;
 }
 
 /**
- * Gets the hint text for the index
+ * Gets the hint text for the given index.
  * @param number index 
  */
 function getHintText(index) {
@@ -76,8 +89,8 @@ function createHints() {
         hint.className = 'hinter';
         hint.style.top = rectangle.top + 'px';
         hint.style.left = rectangle.left + 'px';
-        hint.style.height = rectangle.height + 'px';
-        hint.style.width = rectangle.width + 'px';
+        //hint.style.height = rectangle.height + 'px';
+        //hint.style.width = rectangle.width + 'px';
         hint.innerText = hintText;
         hints[hintText] = {
             element: hint,
@@ -90,17 +103,17 @@ function createHints() {
 }
 
 /**
- * Clicks the target element.
+ * Focuses the target element.
  * @param {element} target
  */
 function follow(target) {
     let rectangle = target.getBoundingClientRect();
     let element = document.createElement('div');
     element.className = 'hinter-focus';
-    element.style.top = rectangle.top + 'px';
-    element.style.left = rectangle.left + 'px';
-    element.style.width = (rectangle.width - 1) + 'px';
-    element.style.height = (rectangle.height - 1) + 'px';
+    element.style.top = (rectangle.top - 1) + 'px';
+    element.style.left = (rectangle.left - 1) + 'px';
+    element.style.width = (rectangle.width) + 'px';
+    element.style.height = (rectangle.height) + 'px';
     target.parentElement.insertBefore(element, target);
     focus = {
         element: element,
@@ -134,7 +147,7 @@ function clear() {
  * Process key presses.
  * @param {event} event
  */
-function onKey(event) {
+function onKeyDown(event) {
     if (focused) {
         clear();
     }
@@ -159,10 +172,12 @@ function onKey(event) {
             return;
         }
     }
-    if (event.shiftKey
+    if (!captureKeyboard
+        && event.shiftKey
         && event.keyCode == activationKey) {
         createHints();
     }
 }
 
-document.body.addEventListener('keydown', onKey, true);
+// attach the event listener
+document.body.addEventListener('keydown', onKeyDown, true);
